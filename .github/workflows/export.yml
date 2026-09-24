@@ -1,0 +1,37 @@
+name: compliance-export
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # daily 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate compliance pages
+        env:
+          COMP_API_URL: https://api.comp.vortex.nyc
+          COMP_API_KEY_VORTEX: ${{ secrets.COMP_API_KEY_VORTEX }}
+          COMP_API_KEY_VEIL: ${{ secrets.COMP_API_KEY_VEIL }}
+          COMP_API_KEY_SEAL: ${{ secrets.COMP_API_KEY_SEAL }}
+          COMP_API_KEY_PILE: ${{ secrets.COMP_API_KEY_PILE }}
+        run: node scripts/export.mjs
+
+      - name: Commit changes
+        run: |
+          git config user.name "vortex-compliance-bot"
+          git config user.email "compliance@vortex.nyc"
+          git add products/ README.md
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "chore: refresh compliance status ($(date -u +%Y-%m-%d))"
+          git push
