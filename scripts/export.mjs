@@ -18,6 +18,10 @@ const ORGS = [
   { key: 'pile', name: 'pile', blurb: 'Internal tooling platform. SOC 2 baseline.' },
 ];
 
+// Frameworks buyers commonly ask about — used to render the "not in scope"
+// section. Absence here is honest scope, not a claim of non-compliance.
+const KNOWN_SCOPE = ['SOC 2', 'SOC 3', 'ISO 27001', 'PCI DSS', 'HIPAA', 'GDPR', 'CCPA', 'eIDAS', 'FedRAMP'];
+
 async function apiGet(key, path) {
   const res = await fetch(`${API_URL}${path}`, {
     headers: { 'x-api-key': key, accept: 'application/json' },
@@ -43,8 +47,11 @@ function render(org, frameworks, scores) {
   ).length;
 
   const frameworkNames = frameworks
-    .map((f) => f?.framework?.name ?? f?.name)
+    .map((f) => f?.framework?.name ?? f?.customFramework?.name ?? f?.name)
     .filter(Boolean);
+  const notTracked = KNOWN_SCOPE.filter(
+    (k) => !frameworkNames.some((n) => n.toLowerCase().includes(k.toLowerCase())),
+  );
 
   const lines = [
     `# ${org.name} — compliance status`,
@@ -52,6 +59,7 @@ function render(org, frameworks, scores) {
     `_${org.blurb}_`,
     '',
     `**Frameworks tracked:** ${frameworkNames.join(', ') || 'none yet'}`,
+    `**Not in scope today:** ${notTracked.join(', ') || '—'}`,
     '',
     '| Area | Progress | State |',
     '|------|----------|-------|',
