@@ -11,7 +11,7 @@ _Payments infrastructure. PCI DSS applies because cardholder data flows through 
 | Tasks completed | 13/51 | ███░░░░░░░ 25% |
 | Team security training | 0/1 | ░░░░░░░░░░ 0% |
 | Documents completed | 0/7 | ░░░░░░░░░░ 0% |
-| Open findings | 26 | tracked internally |
+| Open findings | 25 | tracked internally |
 
 > Auto-generated 2026-09-25 from live data.
 > Counts reflect our internal tracking — "published policies" are written,
