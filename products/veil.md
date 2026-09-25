@@ -13,6 +13,6 @@ _SOC 2 first; ISO 27001 is the next target._
 | Documents completed | 0/8 | ░░░░░░░░░░ 0% |
 | Open findings | 21 | tracked internally |
 
-> Auto-generated 2026-09-24 from live data.
+> Auto-generated 2026-09-25 from live data.
 > Counts reflect our internal tracking — "published policies" are written,
 > reviewed documents; a low number today means early, not absent.
