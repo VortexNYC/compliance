@@ -7,12 +7,12 @@ _E-signature / evidentiary product. SOC 2 baseline plus ESIGN/UETA evidentiary p
 
 | Area | Progress | State |
 |------|----------|-------|
-| Policies published | 0/34 | ░░░░░░░░░░ 0% |
+| Policies published | 0/35 | ░░░░░░░░░░ 0% |
 | Tasks completed | 13/47 | ███░░░░░░░ 28% |
 | Team security training | 0/1 | ░░░░░░░░░░ 0% |
 | Documents completed | 0/7 | ░░░░░░░░░░ 0% |
 | Open findings | 21 | tracked internally |
 
-> Auto-generated 2026-09-25 from live data.
+> Auto-generated 2026-09-26 from live data.
 > Counts reflect our internal tracking — "published policies" are written,
 > reviewed documents; a low number today means early, not absent.
