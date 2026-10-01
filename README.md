@@ -29,4 +29,4 @@ progress than a badge we haven't earned.
 - No raw findings or evidence content are published — counts and framework
   progress only. The details stay private; the trajectory stays public.
 
-_Last export: 2026-09-30 11:49 UTC_
+_Last export: 2026-10-01 12:18 UTC_
