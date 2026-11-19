@@ -81,24 +81,47 @@ async function main() {
   mkdirSync(join(ROOT, 'products'), { recursive: true });
   const stamp = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
 
+  const failed = [];
+
   for (const org of ORGS) {
     const key = process.env[`COMP_API_KEY_${org.key.toUpperCase()}`];
     if (!key) {
+      failed.push(org.key);
       console.warn(`[${org.key}] no COMP_API_KEY_${org.key.toUpperCase()} — skipping`);
       continue;
     }
-    const [frameworksRes, scores] = await Promise.all([
-      apiGet(key, '/v1/frameworks'),
-      apiGet(key, '/v1/frameworks/scores'),
-    ]);
-    const frameworks = Array.isArray(frameworksRes)
-      ? frameworksRes
-      : (frameworksRes.data ?? []);
-    writeFileSync(join(ROOT, 'products', `${org.name}.md`), render(org, frameworks, scores));
-    console.log(`[${org.key}] wrote products/${org.name}.md`);
+    // One org's rejected credential or malformed response must not hide the
+    // other orgs' pages: keep the previous products/<org>.md, report the org
+    // by name, and let the loop continue.
+    try {
+      const [frameworksRes, scores] = await Promise.all([
+        apiGet(key, '/v1/frameworks'),
+        apiGet(key, '/v1/frameworks/scores'),
+      ]);
+      const frameworks = Array.isArray(frameworksRes)
+        ? frameworksRes
+        : (frameworksRes.data ?? []);
+      writeFileSync(join(ROOT, 'products', `${org.name}.md`), render(org, frameworks, scores));
+      console.log(`[${org.key}] wrote products/${org.name}.md`);
+    } catch (err) {
+      failed.push(org.key);
+      console.error(
+        `[${org.key}] export failed (${err instanceof Error ? err.message : String(err)}) — kept the previous products/${org.name}.md`,
+      );
+    }
   }
 
-  // Stamp the README footer
+  if (failed.length > 0) {
+    console.error(
+      `${failed.length} of ${ORGS.length} org(s) did not export: ${failed.join(', ')}. ` +
+        'Set or replace the stale COMP_API_KEY_<ORG> secret(s); the other pages were still refreshed.',
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  // Stamp the README footer only after every org exported, so the stamp
+  // still means "all four pages carry this export".
   const readmePath = join(ROOT, 'README.md');
   const readme = readFileSync(readmePath, 'utf8');
   writeFileSync(readmePath, readme.replace(/_Last export:.*_/, `_Last export: ${stamp}_`));
